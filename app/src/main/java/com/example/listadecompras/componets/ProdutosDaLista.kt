@@ -24,13 +24,14 @@ fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = M
     ) {
         item {
             Box(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.primaryContainer),
             ) {
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.dp, 16.dp, 7.dp, 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "Produto",
@@ -41,7 +42,7 @@ fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = M
                         modifier = modifier.weight(1f),
                         style = MaterialTheme.typography.labelSmall,
                     )
-                    Text(text = "Preço R$${somarValores(listaCompras)}",
+                    Text(text = "Preço R$ ${somarValores(listaCompras)}",
                         modifier = modifier
                             .weight(1f)
                             .padding(start = 30.dp, end = 7.dp),
@@ -85,7 +86,7 @@ fun ProdutoItem(produto: ProdutoKg, modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
         Text(
-            text = produto.preco.toString() ,
+            text = "R$ ${produto.preco}" ,
             style = MaterialTheme.typography.bodyLarge,
             modifier = modifier.width(100.dp),
             textAlign = TextAlign.End

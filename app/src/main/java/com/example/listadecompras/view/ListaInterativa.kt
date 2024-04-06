@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -72,12 +75,13 @@ fun ListadeComprasApp() {
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth().padding(10.dp),
+                    .fillMaxWidth()
+                    .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                 // Coluna contendo a entrada de texto para o nome do produto
-                Column(verticalArrangement = Arrangement.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     EntradaTexto(
                         value = nomeProduto,
                         onValueChange = {
@@ -87,25 +91,28 @@ fun ListadeComprasApp() {
                         label = "Produto",
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
-                        modifier = Modifier.width(130.dp)
+                        modifier = Modifier.width(150.dp)
                     )
 
-                    sugestoes.forEach { sugestao ->
-                        Text(
-                            text = sugestao.produto,
-                            modifier = Modifier
-                                .clickable {
-                                    nomeProduto = sugestao.produto
-                                    sugestoes = emptyList()
-                                }
-                                .width(100.dp)
-                                .background(MaterialTheme.colorScheme.secondaryContainer)
-                                .padding(10.dp)
-                                .animateContentSize(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                    LazyColumn {
+                        items(sugestoes) { sugestao ->
+                            Text(
+                                text = sugestao.produto,
+                                modifier = Modifier
+                                    .clickable {
+                                        nomeProduto = sugestao.produto
+                                        sugestoes = emptyList() // Remover essa linha se não desejar limpar as sugestões ao selecionar
+                                    }
+                                    .width(150.dp)
+                                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                                    .padding(10.dp)
+                                    .animateContentSize(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
+
 
                 }
 
@@ -135,14 +142,24 @@ fun ListadeComprasApp() {
                     contentDescription = "Concluir",
                     modifier = Modifier
                         .clickable {
-                            val quantidadeInt = quantidade.toInt() //Converte a string quantidade em inteiro
-                            val valorProdutoDouble = valorProduto.replace(",", ".").toDouble() //Substitui , por . e transforma em double
-                            listaCompras.add(ProdutoKg(nomeProduto, quantidadeInt, valorProdutoDouble))
+                            val quantidadeInt =
+                                quantidade.toInt() //Converte a string quantidade em inteiro
+                            val valorProdutoDouble = valorProduto
+                                .replace(",", ".")
+                                .toDouble() //Substitui , por . e transforma em double
+                            listaCompras.add(
+                                ProdutoKg(
+                                    nomeProduto,
+                                    quantidadeInt,
+                                    valorProdutoDouble
+                                )
+                            )
                             nomeProduto = ""
                             quantidade = ""
                             valorProduto = "0"
                         }
                         .size(40.dp)
+                        .padding(end = 10.dp)
 
                 )
 
