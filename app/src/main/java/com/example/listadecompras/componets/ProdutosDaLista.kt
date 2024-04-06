@@ -10,8 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.compose.ListaComprasTheme
 import com.example.listadecompras.model.ProdutoKg
+import com.example.listadecompras.view.ListadeComprasApp
 
 @Composable
 fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = Modifier) {
@@ -31,15 +34,17 @@ fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = M
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = "Produto",
-                        modifier = modifier.width(90.dp),
+                        modifier = modifier.weight(1f),
                         style = MaterialTheme.typography.labelSmall,
                     )
-                    Text(text = "Quantidade",
-                        modifier = modifier.width(90.dp),
+                    Text(text = "Quantidade ${""}",
+                        modifier = modifier.weight(1f),
                         style = MaterialTheme.typography.labelSmall,
                     )
-                    Text(text = "Preço R$",
-                        modifier = modifier.width(90.dp),
+                    Text(text = "Preço R$${somarValores(listaCompras)}",
+                        modifier = modifier
+                            .weight(1f)
+                            .padding(start = 30.dp, end = 7.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.End
@@ -85,5 +90,26 @@ fun ProdutoItem(produto: ProdutoKg, modifier: Modifier = Modifier) {
             modifier = modifier.width(100.dp),
             textAlign = TextAlign.End
         )
+    }
+}
+
+/**
+ * Função somar a lista de valores.
+ */
+private fun somarValores(lista:List<ProdutoKg>): Double{
+    var soma = 0.00
+    for (item in lista)
+        soma += item.preco
+    return soma
+}
+@Preview(showBackground = true)
+@Composable
+fun ProdutosDaListaPreview() {
+    ListaComprasTheme {
+        val listaCompras: MutableList<ProdutoKg> = mutableListOf(
+            ProdutoKg("Arroz", 2, 2.35),
+            ProdutoKg("Feijão", 3, 7.35),
+        )
+        ProdutosDaLista(listaCompras)
     }
 }

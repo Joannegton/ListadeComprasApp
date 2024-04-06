@@ -4,16 +4,17 @@ package com.example.listadecompras.view
 
 import EntradaTexto
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,8 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,17 +48,16 @@ import com.example.listadecompras.model.ProdutoKg
 @Composable
 fun ListadeComprasApp() {
     val listaCompras: MutableList<ProdutoKg> = mutableListOf(
-        ProdutoKg("Arroz", 2, 2),
-        ProdutoKg("Feijão", 3, 7),
+        ProdutoKg("Arroz", 2, 2.35),
+        ProdutoKg("Feijão", 3, 7.35),
     )
 
     var nomeProduto by remember { mutableStateOf("") }
-    var quantidade by remember { mutableIntStateOf(0) }
-    var valorProduto by remember { mutableIntStateOf(0) }
+    var quantidade by remember { mutableStateOf("") }
+    var valorProduto by remember { mutableStateOf("") }
 
     // Variável de estado para armazenar as sugestões
     var sugestoes: List<Item> by remember { mutableStateOf(emptyList()) }
-    var isSugestaoVisivel by remember { mutableStateOf(false) }
 
     Scaffold (
         topBar = {
@@ -70,9 +68,14 @@ fun ListadeComprasApp() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(65.dp))
+            Spacer(modifier = Modifier.height(55.dp))
 
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                 // Coluna contendo a entrada de texto para o nome do produto
                 Column(verticalArrangement = Arrangement.Center) {
                     EntradaTexto(
@@ -82,65 +85,65 @@ fun ListadeComprasApp() {
                             sugestoes = buscarSugestoes(nomeProduto)
                         },
                         label = "Produto",
-                        modifier = Modifier.width(150.dp),
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
+                        modifier = Modifier.width(130.dp)
                     )
-                    if (nomeProduto !== "")
-                        sugestoes.forEach { sugestao ->
-                            Text(
-                                text = sugestao.produto,
-                                modifier = Modifier
-                                    .clickable {
-                                        nomeProduto = sugestao.produto
-                                        sugestoes = emptyList()
-                                    }
-                                    .width(100.dp)
-                                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                                    .padding(10.dp),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+
+                    sugestoes.forEach { sugestao ->
+                        Text(
+                            text = sugestao.produto,
+                            modifier = Modifier
+                                .clickable {
+                                    nomeProduto = sugestao.produto
+                                    sugestoes = emptyList()
+                                }
+                                .width(100.dp)
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .padding(10.dp)
+                                .animateContentSize(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
 
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
 
                 EntradaTexto(
-                    value = quantidade.toString(),
-                    onValueChange = { quantidade = it.toInt() },
-                    label = "Quantidade",
-                    modifier = Modifier.width(100.dp),
+                    value = quantidade,
+                    onValueChange = { quantidade = it },
+                    label = "Unidades",
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Next,
+                    modifier = Modifier.width(90.dp),
                 )
 
-                Spacer(modifier = Modifier.width(16.dp))
-
                 EntradaTexto(
-                    value = valorProduto.toString(),
-                    onValueChange = { valor ->
-                        val novoValor = valor.toIntOrNull() ?: 0
-                        valorProduto = novoValor
+                    value = valorProduto,
+                    onValueChange = {
+                        valorProduto = it
                     },
                     label = "Valor",
-                    modifier = Modifier.width(100.dp),
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = ImeAction.Done
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                    modifier = Modifier.width(80.dp)
                 )
 
-                Spacer(modifier = Modifier.width(16.dp))
-
                 Icon(
-                    painter = painterResource(R.drawable.ic_done_24),
+                    painter = painterResource(R.drawable.ic_done_100),
                     contentDescription = "Concluir",
-                    modifier = Modifier.clickable {
-                        listaCompras.add(ProdutoKg(nomeProduto, quantidade, valorProduto))
-                        nomeProduto = ""
-                        quantidade = 0
-                        valorProduto = 0
-                    }
+                    modifier = Modifier
+                        .clickable {
+                            val quantidadeInt = quantidade.toInt() //Converte a string quantidade em inteiro
+                            val valorProdutoDouble = valorProduto.replace(",", ".").toDouble() //Substitui , por . e transforma em double
+                            listaCompras.add(ProdutoKg(nomeProduto, quantidadeInt, valorProdutoDouble))
+                            nomeProduto = ""
+                            quantidade = ""
+                            valorProduto = "0"
+                        }
+                        .size(40.dp)
+
                 )
 
             }
@@ -154,11 +157,18 @@ fun ListadeComprasApp() {
 /**
  * Função para buscar sugestões de produtos com base no texto digitado.
  */
-fun buscarSugestoes(textoDigitado: String): List<Item> {
-    return listaItensMercado.filter {
-        it.produto.contains(textoDigitado, ignoreCase = true)
+private fun buscarSugestoes(textoDigitado: String): List<Item> {
+    if (textoDigitado.isNotEmpty()) {
+        return listaItensMercado.filter {
+            it.produto.contains(textoDigitado, ignoreCase = true)
+        }
+    } else {
+        return emptyList()
     }
 }
+
+
+
 
 /**
  * Preview da lista de produtos para visualização no Android Studio.
