@@ -11,10 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.compose.ListaComprasTheme
 import com.example.listadecompras.model.ProdutoKg
 import com.example.listadecompras.view.ListadeComprasApp
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = Modifier) {
@@ -41,14 +45,20 @@ fun ProdutosDaLista(listaCompras: MutableList<ProdutoKg>, modifier: Modifier = M
                     Text(text = "Quantidade ${""}",
                         modifier = modifier.weight(1f),
                         style = MaterialTheme.typography.labelSmall,
+                        textAlign = TextAlign.Center
                     )
-                    Text(text = "Preço R$ ${somarValores(listaCompras)}",
+
+                    val formatador = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+                    val valorFormatado = formatador.format(somarValores(listaCompras))
+
+                    Text(text = "Preço R$ ${valorFormatado}",
                         modifier = modifier
                             .weight(1f)
-                            .padding(start = 30.dp, end = 7.dp),
+                            .padding(start = 0.dp, end = 7.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        lineHeight = 10.sp
                     )
                 }
             }
