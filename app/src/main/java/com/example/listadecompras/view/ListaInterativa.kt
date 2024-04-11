@@ -169,9 +169,10 @@ fun ListadeComprasApp() {
                                     quantidade = ""
                                     valorProduto = ""
                                     temErro = false
-                                } catch (e: NumberFormatException) {
+                                } catch (e: Exception) {
                                     // Lidar com conversão de tipos inválidos
                                     temErro = true
+
                                 }
                             } else {
                                 // Mostrar mensagem de erro ou realizar outra ação adequada
